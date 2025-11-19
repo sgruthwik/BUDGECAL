@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BUDGECAL</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(ellipse at top right, #deeff5 0%, #86bcbc 45%, #fcbacb 100%);
+      animation: bgmove 10s ease-in-out infinite alternate;
+    }
+    @keyframes bgmove {
+      0% { background-position: top right; }
+      100% { background-position: bottom left; }
+    }
+    .container {
+      background: rgba(255,255,255,0.88);
+      border-radius: 22px;
+      box-shadow: 0 10px 30px 0 rgba(120,160,170,0.22);
+      max-width: 420px;
+      width: 98vw;
+      padding: 38px 32px 32px 32px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+      animation: fadeInUp 1s ease;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(60px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      font-size: 2.7rem;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      color: #217a8e;
+      text-shadow: 0 0 12px #bce6ed;
+      margin-bottom: 21px;
+      user-select: text;
+      animation: scaleFade 1.2s;
+    }
+    @keyframes scaleFade {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .note {
+      font-size: 1rem;
+      color: #68a48f;
+      text-align: center;
+      margin-bottom: 16px;
+      font-weight: 600;
+      background: #e6f6fa;
+      border-radius: 9px;
+      padding: 10px;
+      box-shadow: 0 3px 10px #deeff590;
+      animation: fadeInNote 1.2s;
+    }
+    @keyframes fadeInNote {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 5px;
+      color: #216e5a;
+      letter-spacing: 0.04em;
+      text-align: left;
+      margin-top: 16px;
+    }
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 11px 15px;
+      border-radius: 11px;
+      border: 2px solid #bce6ed;
+      font-size: 15px;
+      background: #e6f6fa;
+      color: #5e6b6d;
+      margin-bottom: 2px;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.25s;
+      box-shadow: 0 1px 7px rgba(34,178,195,0.14);
+    }
+    input:focus {
+      border: 2px solid #f4657b;
+      box-shadow: 0 0 10px #fcbacb;
+      background: #fffafd;
+    }
+    button {
+      margin-top: 25px;
+      width: 100%;
+      background: linear-gradient(90deg, #f4657b, #86bcbc 120%);
+      color: #fff;
+      padding: 15px 0;
+      border: none;
+      border-radius: 35px;
+      font-weight: 700;
+      font-size: 21px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px #fcbacb90;
+      letter-spacing: 0.05em;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+      outline: none;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #deeff5, #f4657b 120%);
+      box-shadow: 0 8px 22px #f4657bb4;
+      transform: scale(1.045);
+    }
+    button:active {
+      transform: scale(0.97);
+      box-shadow: none;
+    }
+    .result {
+      margin-top: 27px;
+      background: #fde6ee;
+      border-radius: 13px;
+      font-weight: 700;
+      font-size: 19px;
+      color: #1c6a60;
+      box-shadow: 0 2px 14px #86bcbc55;
+      padding: 15px 13px;
+      animation: resultFade 0.7s;
+      user-select: text;
+      text-align: center;
+      font-family: Quicksand, sans-serif;
+    }
+    @keyframes resultFade {
+      from { opacity: 0; transform: scale(0.94); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .tips {
+      font-size: 1.08rem;
+      margin-top: 16px;
+      color: #f1638f;
+      background: #e6f6fa;
+      border-radius: 9px;
+      padding: 10px;
+      box-shadow: 0 3px 10px #86bcbc35;
+      text-align: left;
+      font-weight: 600;
+      animation: fadeInNote 1.2s;
+    }
+
+    .small {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2b6560;
+      margin-top: 8px;
+    }
+
+    .muted {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #6d8f8a;
+      margin-top: 6px;
+    }
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2px solid rgba(0,0,0,0.04);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .motivation-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .appLayout {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    .side3d {
+      width: 160px;
+      height: 220px;
+      display: block;
+      position: relative;
+      margin-top: 6px;
+    }
+    .side3d canvas { width:100%; height:100%; display:block; border-radius:12px; }
+    .char-caption {
+      position: absolute;
+      left: 50%;
+      top: 6px;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.96);
+      color: #333;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      white-space: nowrap;
+      display: none;
+      opacity: 0;
+      transition: opacity 260ms ease, transform 260ms ease;
+      pointer-events: none;
+      font-size: 0.92rem;
+    }
+    @media (max-width:720px){
+      .side3d{ display:none; }
+      .appLayout{ display:block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="appLayout">
+    <div class="container">
+    <h1>BUDGECAL</h1>
+    <div class="note">Set a quick goal for anything you want (fridge, Europe trip, gadget, etc). Speed up your savings, track your results!</div>
+
+    <label for="goalName">Goal Name:</label>
+    <input type="text" id="goalName" placeholder="e.g., Fridge, Europe Trip" />
+
+    <label for="goalCost">Goal Cost (₹):</label>
+    <input type="number" id="goalCost" placeholder="e.g., 35000" />
+
+    <label for="targetMonths">Target Time (months):</label>
+    <input type="number" id="targetMonths" placeholder="e.g., 6" />
+
+    <label for="monthlyIncome">Monthly Income (₹):</label>
+    <input type="number" id="monthlyIncome" placeholder="e.g., 10000" />
+
+    <label for="monthlyExpenses">Monthly Expenses (₹):</label>
+    <input type="number" id="monthlyExpenses" placeholder="e.g., 5000" />
+
+    <button id="calcBtn">Calculate Monthly Savings</button>
+
+    <div id="result" class="result" style="display:none;"></div>
+    <div id="tips" class="tips" style="display:none;"></div>
+    <div style="display:flex; gap:8px; margin-top:10px; align-items:center; justify-content:space-between;">
+      <div style="display:flex; gap:8px; flex:0 0 56%;">
+        <button id="inspireBtn" style="background:linear-gradient(90deg,#86bcbc,#f4657b); font-size:0.95rem; padding:9px; border-radius:10px;">Inspire me</button>
+        <button id="paletteBtn" style="background:linear-gradient(90deg,#f0f0f0,#d2b48c); font-size:0.95rem; padding:9px; border-radius:10px;">Palette</button>
+      </div>
+      <div class="muted" style="flex:1; text-align:right;">Tip: values are saved locally in your browser for convenience.</div>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:10px; align-items:center;">
+      <label for="avatarSelect" style="margin:0; font-weight:700; color:#216e5a;">Avatar:</label>
+      <select id="avatarSelect" style="padding:8px 10px; border-radius:8px; border:2px solid #bce6ed; background:#e6f6fa; font-weight:700;">
+        <option value="bear">Martial Bear</option>
+        <option value="cat">Comfy Cat</option>
+        <option value="toy">Toy Pal</option>
+        <option value="custom">Use my image (upload)</option>
+      </select>
+      <input type="file" id="avatarUpload" accept="image/*" style="display:none;" />
+    </div>
+    <div id="motivation" class="tips" style="display:none; margin-top:12px;"></div>
+    </div>
+  <div class="side3d" aria-hidden="true">
+    <canvas id="charCanvas"></canvas>
+    <div id="charCaption" class="char-caption" aria-hidden="false"></div>
+  </div>
+
+  <script>
+    // Helper: format number as rupee string (₹)
+    function formatRupee(value) {
+      if (isNaN(value)) return "₹0";
+      return '₹' + Number(value).toLocaleString('en-IN', {maximumFractionDigits: 0});
+    }
+
+    // Load saved values (if any)
+    function loadSaved() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('budge.last') || '{}');
+        if (saved.goalName) document.getElementById('goalName').value = saved.goalName;
+        if (saved.goalCost) document.getElementById('goalCost').value = saved.goalCost;
+        if (saved.targetMonths) document.getElementById('targetMonths').value = saved.targetMonths;
+        if (saved.monthlyIncome) document.getElementById('monthlyIncome').value = saved.monthlyIncome;
+        if (saved.monthlyExpenses) document.getElementById('monthlyExpenses').value = saved.monthlyExpenses;
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    function saveInputs(data) {
+      try {
+        localStorage.setItem('budge.last', JSON.stringify(data));
+      } catch (e) {
+        // ignore storage errors
+      }
+    }
+
+    function showResult(html) {
+      const res = document.getElementById('result');
+      res.style.display = 'block';
+      res.innerHTML = html;
+    }
+
+    function showTips(html) {
+      const tips = document.getElementById('tips');
+      tips.style.display = 'block';
+      tips.innerHTML = html;
+    }
+
+    function hideTips() {
+      const tips = document.getElementById('tips');
+      tips.style.display = 'none';
+      tips.innerHTML = '';
+    }
+
+    function calculateSavings() {
+      hideTips();
+      const goalName = document.getElementById('goalName').value.trim() || 'Goal';
+      const goalCostRaw = document.getElementById('goalCost').value;
+      const targetMonthsRaw = document.getElementById('targetMonths').value;
+      const monthlyIncomeRaw = document.getElementById('monthlyIncome').value;
+      const monthlyExpensesRaw = document.getElementById('monthlyExpenses').value;
+
+      // Parse numbers
+      const goalCost = parseFloat(goalCostRaw || 0);
+      const targetMonths = Math.floor(parseFloat(targetMonthsRaw || 0));
+      const monthlyIncome = parseFloat(monthlyIncomeRaw || 0);
+      const monthlyExpenses = parseFloat(monthlyExpensesRaw || 0);
+
+      // Basic validation
+      const errors = [];
+      if (!goalCost || goalCost <= 0) errors.push('Please enter a valid Goal Cost (> 0).');
+      if (!targetMonths || targetMonths <= 0) errors.push('Please enter a valid Target Time in months (> 0).');
+      if (!monthlyIncome || monthlyIncome <= 0) errors.push('Please enter a valid Monthly Income (> 0).');
+      if (isNaN(monthlyExpenses) || monthlyExpenses < 0) errors.push('Please enter valid Monthly Expenses (>= 0).');
+
+      if (errors.length > 0) {
+        showResult(errors.map(e => `<div style="color:#b01b32">${e}</div>`).join(''));
+        return;
+      }
+
+      // Save inputs for convenience
+      saveInputs({
+        goalName, goalCost: goalCostRaw, targetMonths: targetMonthsRaw,
+        monthlyIncome: monthlyIncomeRaw, monthlyExpenses: monthlyExpensesRaw
+      });
+
+      const available = monthlyIncome - monthlyExpenses; // what can actually be saved per month today
+      const requiredMonthly = goalCost / targetMonths;   // required monthly to meet target
+
+      let html = '';
+  html += `<div style="font-size:1.05rem; margin-bottom:8px">Plan for <span class="accent">${escapeHtml(goalName)}</span></div>`;
+      html += `<div style="font-size:1.1rem">${formatRupee(goalCost)} total &middot; target ${targetMonths} month(s)</div>`;
+      html += `<div class="small">You currently have ${formatRupee(available)} available on average per month (income - expenses).</div>`;
+      html += `<hr style="margin:10px 0; border:none; height:1px; background:#e6f6fa;">`;
+
+  html += `<div style="margin-top:6px">Required monthly to meet target: <strong class="accent">${formatRupee(requiredMonthly)}</strong></div>`;
+
+      if (available <= 0) {
+        html += `<div style="margin-top:12px; color:#9b2a3b">At your current income/expenses you have no available savings per month. You need to either increase income or reduce expenses to start saving.</div>`;
+        showResult(html);
+        showTips(buildTips(available, requiredMonthly, goalCost, targetMonths));
+        return;
+      }
+
+      if (available >= requiredMonthly) {
+        html += `<div style="margin-top:12px; color:#0b7b5a">Great — your current monthly available amount covers the monthly target.</div>`;
+        html += `<div style="margin-top:8px">If you save <strong>${formatRupee(requiredMonthly)}</strong> per month, you'll reach your goal in <strong>${targetMonths} month(s)</strong>.</div>`;
+        // Also show how much extra per month and time if saving all available
+        const extra = available - requiredMonthly;
+        if (extra > 0) {
+          html += `<div style="margin-top:8px">Extra you could save each month: <strong>${formatRupee(extra)}</strong>. Consider building an emergency buffer or accelerating this goal!</div>`;
+        }
+        showResult(html);
+        showTips(buildTips(available, requiredMonthly, goalCost, targetMonths));
+        return;
+      } else {
+        // available < requiredMonthly -> cannot meet target with current savings
+        const shortfall = requiredMonthly - available;
+        const monthsIfSaveAvailable = Math.ceil(goalCost / available);
+        html += `<div style="margin-top:12px; color:#b4413c">Shortfall: you are <strong>${formatRupee(shortfall)}</strong> short per month to meet the target.</div>`;
+        html += `<div style="margin-top:10px">If you keep saving <strong>${formatRupee(available)}</strong> per month, it will take approximately <strong>${monthsIfSaveAvailable} month(s)</strong> to reach the goal.</div>`;
+        html += `<div style="margin-top:10px">If you want to meet the target of ${targetMonths} month(s), you'll need to either:</div>`;
+        html += `<ul style="text-align:left; margin:8px 0 0 18px; color:#2b6560;"><li>Increase monthly income by at least ${formatRupee(shortfall)}</li><li>Reduce monthly expenses by at least ${formatRupee(shortfall)}</li><li>Or extend the target time to about <strong>${Math.ceil(monthsIfSaveAvailable)}</strong> months</li></ul>`;
+        showResult(html);
+        showTips(buildTips(available, requiredMonthly, goalCost, targetMonths));
+        return;
+      }
+    }
+
+    function buildTips(available, requiredMonthly, goalCost, targetMonths) {
+      const tips = [];
+      tips.push(`<strong>Quick tips</strong>`);
+      if (available <= 0) {
+        tips.push('• Review and cut non-essential expenses (subscriptions, dining out) to create initial savings.');
+        tips.push('• Seek small side income streams (freelance, part-time) to create positive monthly savings.');
+      } else {
+        tips.push(`• Automate transfers of at least ${formatRupee(Math.min(available, requiredMonthly))} each month into a separate savings account.`);
+        tips.push('• If you want to accelerate, add any windfalls (bonuses, gifts) directly to this goal.');
+      }
+      tips.push('• Keep an emergency buffer (3–6 months of expenses) separate to avoid dipping into this goal.');
+      tips.push('• Revisit this plan monthly and update income/expenses numbers as they change.');
+      return tips.map(t => `<div style="margin-bottom:6px">${t}</div>`).join('');
+    }
+
+    // simple escape for user-entered name in the result
+    function escapeHtml(s) {
+      return s.replace(/[&<>"'`=\/]/g, function (c) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'}[c];
+      });
+    }
+
+    // wire up
+    document.getElementById('calcBtn').addEventListener('click', calculateSavings);
+    // Support Enter key when in any input
+    const inputs = Array.from(document.querySelectorAll('input'));
+    inputs.forEach(i => {
+      i.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          calculateSavings();
+        }
+      });
+    });
+
+    // Load saved on start
+    loadSaved();
+
+    // --- Caption / speech bubble for 3D mascot ---
+    const _captions = [
+      'Hi! 👋',
+      'How are you doing?',
+      'All good?',
+      'Keep going — small steps count.',
+      'You got this! 💪',
+      'Nice progress — stay consistent.'
+    ];
+    let _captionTimer = null;
+    function showCaption(msg, duration = 3800) {
+      const el = document.getElementById('charCaption');
+      if (!el) return;
+      el.textContent = msg;
+      el.style.display = 'block';
+      // small pop animation
+      el.style.transform = 'translateX(-50%) translateY(-6px)';
+      requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateX(-50%) translateY(0)'; });
+      if (_captionTimer) clearTimeout(_captionTimer);
+      _captionTimer = setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(-50%) translateY(-6px)';
+        setTimeout(() => { el.style.display = 'none'; }, 300);
+      }, duration);
+    }
+
+    // periodic friendly pings (every 12s) only when canvas visible
+    let _captionInterval = setInterval(() => {
+      const canvasVisible = document.querySelector('.side3d') && window.getComputedStyle(document.querySelector('.side3d')).display !== 'none';
+      if (!canvasVisible) return;
+      const msg = _captions[Math.floor(Math.random() * _captions.length)];
+      showCaption(msg, 3800);
+    }, 12000);
+    // Inspiration button
+    document.getElementById('inspireBtn').addEventListener('click', function() {
+      // Try to use latest inputs to create a context-aware inspiration
+      const monthlyIncome = parseFloat(document.getElementById('monthlyIncome').value || 0);
+      const monthlyExpenses = parseFloat(document.getElementById('monthlyExpenses').value || 0);
+      const goalCost = parseFloat(document.getElementById('goalCost').value || 0);
+      const targetMonths = Math.floor(parseFloat(document.getElementById('targetMonths').value || 0));
+      const available = monthlyIncome - monthlyExpenses;
+      const requiredMonthly = targetMonths > 0 ? (goalCost / targetMonths) : 0;
+      const monthsIfSaveAvailable = available > 0 ? Math.ceil(goalCost / available) : Infinity;
+      showMotivation(available, requiredMonthly, goalCost, targetMonths, monthsIfSaveAvailable);
+      // show a friendly caption above the mascot as well
+      try {
+        const msg = _captions[Math.floor(Math.random() * _captions.length)];
+        showCaption(msg, 4200);
+      } catch (e) { }
+    });
+
+    // show motivation area with a context-aware one-liner
+    function showMotivation(available, requiredMonthly, goalCost, targetMonths, monthsIfSaveAvailable) {
+      const el = document.getElementById('motivation');
+      el.style.display = 'block';
+      const lines = buildMotivations(available, requiredMonthly, goalCost, targetMonths, monthsIfSaveAvailable);
+      // pick a random motivational line and show a short list
+      const pick = lines.sort(() => 0.5 - Math.random()).slice(0, 3);
+      el.innerHTML = `<strong style="display:block; margin-bottom:6px;">Motivation</strong>` + pick.map(p => `<div style="margin-bottom:8px">${p}</div>`).join('');
+    }
+
+    function buildMotivations(available, requiredMonthly, goalCost, targetMonths, monthsIfSaveAvailable) {
+      const win = [
+        'Nice work — you are on track. Small regular steps build big results.',
+        'Keep going: consistent monthly saving compounds into big wins over time.',
+        'You already covered the monthly target — reward yourself small milestones to stay motivated.'
+      ];
+      const short = [
+        'Every rupee you save today moves you closer — start small and scale up.',
+        'Shortfalls are temporary. Find one small expense to cut this week and set that aside for your goal.',
+        'A side hustle or selling unused items can accelerate progress: 1 extra month of effort pays off.'
+      ];
+      const neutral = [
+        'Set a calendar reminder for a monthly review — momentum comes from measurement.',
+        'Break the goal into weekly micro-targets and celebrate small wins.',
+        'Remember: saving is a habit. The first 30 days are the hardest, after that it gets easier.'
+      ];
+
+      if (!isFinite(monthsIfSaveAvailable) || available <= 0) {
+        return ['Start by creating a tiny emergency buffer (₹500–₹2000). Building momentum is the goal.'].concat(short, neutral);
+      }
+      if (available >= requiredMonthly) return win.concat(neutral);
+      // otherwise shortfall case
+      return short.concat(neutral);
+    }
+
+    // --- Avatar / character support (safe, non-copyright mascots + custom upload) ---
+    // simple helper to build a data URI for inline SVG
+    function svgDataUri(svg) {
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Three small, original, non-copyrighted SVG mascots
+    const avatarSvgs = {
+      bear: svgDataUri(`
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>
+          <rect width='100%' height='100%' rx='14' fill='#fff'/>
+          <g transform='translate(10,8)'>
+            <circle cx='50' cy='44' r='28' fill='#f6d9c6'/>
+            <circle cx='30' cy='24' r='10' fill='#f6d9c6' />
+            <circle cx='70' cy='24' r='10' fill='#f6d9c6' />
+            <circle cx='40' cy='44' r='4' fill='#2b2b2b'/>
+            <circle cx='60' cy='44' r='4' fill='#2b2b2b'/>
+            <path d='M40 60 q10 10 20 0' stroke='#2b2b2b' stroke-width='3' fill='none' stroke-linecap='round'/>
+            <rect x='8' y='70' width='84' height='14' rx='6' fill='#e2f6f6'/>
+          </g>
+        </svg>`),
+      cat: svgDataUri(`
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>
+          <rect width='100%' height='100%' rx='14' fill='#fff'/>
+          <g transform='translate(12,12)'>
+            <ellipse cx='46' cy='40' rx='30' ry='26' fill='#ffd9c9'/>
+            <path d='M22 26 q8 -18 24 -6 q16 -12 24 6' fill='#ffd9c9'/>
+            <circle cx='34' cy='40' r='4' fill='#2b2b2b'/>
+            <circle cx='58' cy='40' r='4' fill='#2b2b2b'/>
+            <path d='M36 54 q10 8 20 0' stroke='#2b2b2b' stroke-width='3' fill='none' stroke-linecap='round'/>
+            <rect x='6' y='72' width='80' height='12' rx='6' fill='#e6f6fa'/>
+          </g>
+        </svg>`),
+      toy: svgDataUri(`
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>
+          <rect width='100%' height='100%' rx='14' fill='#fff'/>
+          <g transform='translate(14,10)'>
+            <rect x='20' y='26' width='52' height='48' rx='8' fill='#d3f3f0'/>
+            <circle cx='34' cy='42' r='6' fill='#2b2b2b'/>
+            <circle cx='58' cy='42' r='6' fill='#2b2b2b'/>
+            <rect x='36' y='58' width='16' height='8' rx='4' fill='#fff' />
+            <rect x='6' y='76' width='80' height='12' rx='6' fill='#f7e6f0'/>
+          </g>
+        </svg>`)
+    };
+
+    // custom avatar dataURL (from file upload)
+    let customAvatarDataURL = null;
+
+    // wire avatar controls
+    const avatarSelect = document.getElementById('avatarSelect');
+    const avatarUpload = document.getElementById('avatarUpload');
+    avatarSelect.addEventListener('change', function() {
+      if (avatarSelect.value === 'custom') {
+        avatarUpload.style.display = 'inline-block';
+      } else {
+        avatarUpload.style.display = 'none';
+      }
+    });
+
+    avatarUpload.addEventListener('change', function(e) {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        customAvatarDataURL = ev.target.result;
+        try { localStorage.setItem('budge.avatar.custom', customAvatarDataURL); } catch (err) {}
+        // show immediate motivation with the new avatar
+        document.getElementById('inspireBtn').click();
+      };
+      reader.readAsDataURL(f);
+    });
+
+    // restore any previously stored custom avatar
+    try { customAvatarDataURL = localStorage.getItem('budge.avatar.custom') || null; } catch (err) {}
+
+    // update showMotivation to include avatar image
+    const _showMotivation = showMotivation;
+    function showMotivation(available, requiredMonthly, goalCost, targetMonths, monthsIfSaveAvailable) {
+      const el = document.getElementById('motivation');
+      el.style.display = 'block';
+      const lines = buildMotivations(available, requiredMonthly, goalCost, targetMonths, monthsIfSaveAvailable);
+      const pick = lines.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+      // choose avatar source
+      let avatarSrc;
+      const sel = document.getElementById('avatarSelect');
+      if (sel && sel.value === 'custom' && customAvatarDataURL) avatarSrc = customAvatarDataURL;
+      else if (sel && sel.value && avatarSvgs[sel.value]) avatarSrc = avatarSvgs[sel.value];
+      else avatarSrc = avatarSvgs.bear;
+
+      el.innerHTML = `
+        <div style="font-weight:800; margin-bottom:8px;">Motivation</div>
+        <div class="motivation-row">
+          <img id="avatarImg" class="avatar" src="${avatarSrc}" alt="avatar" />
+          <div style="flex:1">${pick.map(p => `<div style="margin-bottom:8px">${p}</div>`).join('')}</div>
+        </div>
+      `;
+    }
+
+    // --- Palette switching ---
+    const palettes = [
+      {
+        name: 'Teal & Red',
+        bg1: '#dff6f6', bg2: '#86bcbc', bg3: '#f7b7c1',
+        containerBg: 'rgba(255,255,255,0.95)',
+        primary: '#0e7a75', glow: 'rgba(188,230,237,0.9)',
+        noteColor: '#127a6b', noteBg: '#e6fbfa',
+        inputBorder: '#86bcbc', inputBg: '#f7ffff', focus: '#f03f5c', focusGlow: 'rgba(252,186,203,0.6)',
+        btn1: '#f03f5c', btn2: '#86bcbc', btnShadow: 'rgba(240,63,92,0.28)', hover1: '#dff6f6', hover2: '#f03f5c',
+        resultBg: '#fff1f4', resultText: '#0e6a63', tipsColor: '#d6336c', tipsShadow: 'rgba(134,188,188,0.18)'
+      },
+      {
+        name: 'White & Chocolate',
+        bg1: '#ffffff', bg2: '#fff7f0', bg3: '#f6efe6',
+        containerBg: '#fff',
+        primary: '#6b3e2d', glow: 'rgba(220,190,170,0.7)',
+        noteColor: '#6b3e2d', noteBg: '#fff5f0',
+        inputBorder: '#e6d5c8', inputBg: '#fffaf7', focus: '#8b5a3c', focusGlow: 'rgba(139,90,60,0.18)',
+        btn1: '#8b5a3c', btn2: '#f3e9df', btnShadow: 'rgba(139,90,60,0.18)', hover1: '#fff7f0', hover2: '#8b5a3c',
+        resultBg: '#fff8f4', resultText: '#5b3d2f', tipsColor: '#7b4b3a', tipsShadow: 'rgba(190,160,140,0.12)'
+      },
+      {
+        name: 'Blue Slate',
+        bg1: '#e8f1f6', bg2: '#9fb8c8', bg3: '#f0d9e0',
+        containerBg: 'rgba(255,255,255,0.96)',
+        primary: '#2b6b7a', glow: 'rgba(180,220,230,0.8)',
+        noteColor: '#2b6b7a', noteBg: '#ecfbff',
+        inputBorder: '#9fb8c8', inputBg: '#f7ffff', focus: '#ff7a85', focusGlow: 'rgba(252,186,203,0.5)',
+        btn1: '#ff7a85', btn2: '#9fb8c8', btnShadow: 'rgba(255,122,133,0.18)', hover1: '#e8f1f6', hover2: '#ff7a85',
+        resultBg: '#fff6f8', resultText: '#214f56', tipsColor: '#d14f6f', tipsShadow: 'rgba(120,150,160,0.12)'
+      },
+      {
+        name: 'Purple & Gold',
+        bg1: '#faf5ff', bg2: '#c9b6e3', bg3: '#ffd9c9',
+        containerBg: 'rgba(255,255,255,0.96)',
+        primary: '#5b2b7a', glow: 'rgba(220,200,235,0.9)',
+        noteColor: '#5b2b7a', noteBg: '#faf0ff',
+        inputBorder: '#d8c1e8', inputBg: '#fff9ff', focus: '#e58a00', focusGlow: 'rgba(229,138,0,0.14)',
+        btn1: '#e58a00', btn2: '#c9b6e3', btnShadow: 'rgba(229,138,0,0.18)', hover1: '#faf5ff', hover2: '#e58a00',
+        resultBg: '#fff9f2', resultText: '#5b2b7a', tipsColor: '#b83f6b', tipsShadow: 'rgba(190,150,200,0.12)'
+      }
+    ];
+
+    function applyPalette(p) {
+      // body background
+      document.body.style.background = `radial-gradient(ellipse at top right, ${p.bg1} 0%, ${p.bg2} 45%, ${p.bg3} 100%)`;
+      // container
+      const container = document.querySelector('.container'); if (container) container.style.background = p.containerBg;
+      // headings and highlights
+      const h1 = document.querySelector('h1'); if (h1) { h1.style.color = p.primary; h1.style.textShadow = `0 0 12px ${p.glow}`; }
+      // note
+      const note = document.querySelector('.note'); if (note) { note.style.color = p.noteColor; note.style.background = p.noteBg; }
+      // labels
+      const labels = document.querySelectorAll('label'); labels.forEach(l => l.style.color = p.primary);
+      // inputs
+      const inputs = document.querySelectorAll('input[type="number"], input[type="text"], select');
+      inputs.forEach(i => { i.style.border = `2px solid ${p.inputBorder}`; i.style.background = p.inputBg; });
+      // buttons
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(b => {
+        b.style.background = `linear-gradient(90deg, ${p.btn1}, ${p.btn2} 120%)`;
+        b.style.boxShadow = `0 4px 20px ${p.btnShadow}`;
+        // hover behavior via listeners
+        b.onmouseenter = () => b.style.background = `linear-gradient(90deg, ${p.hover1}, ${p.hover2} 120%)`;
+        b.onmouseleave = () => b.style.background = `linear-gradient(90deg, ${p.btn1}, ${p.btn2} 120%)`;
+      });
+      // result & tips
+      const res = document.querySelector('.result'); if (res) { res.style.background = p.resultBg; res.style.color = p.resultText; }
+      const tips = document.querySelectorAll('.tips'); tips.forEach(t => { t.style.background = p.noteBg; t.style.color = p.tipsColor; t.style.boxShadow = `0 3px 10px ${p.tipsShadow}`; });
+      // muted and small
+      const smalls = document.querySelectorAll('.small'); smalls.forEach(s => s.style.color = p.small || p.primary);
+      const muted = document.querySelectorAll('.muted'); muted.forEach(m => m.style.color = p.muted || '#6d8f8a');
+      // accents
+      const accents = document.querySelectorAll('.accent'); accents.forEach(a => a.style.color = p.tipsColor || p.primary);
+      if (typeof window.updateCharacterColor === 'function') {
+        try { window.updateCharacterColor(p.primary || p.btn2); } catch(e){}
+      }
+    }
+
+    function rotatePalette(nextIndex) {
+      const idx = typeof nextIndex === 'number' ? nextIndex : (() => {
+        try { const last = parseInt(localStorage.getItem('budge.paletteIndex')||'-1',10); return (last + 1) % palettes.length; } catch(e){ return 0; }
+      })();
+      const p = palettes[idx];
+      applyPalette(p);
+      try { localStorage.setItem('budge.paletteIndex', idx); } catch (e) {}
+      // set button labels to indicate current palette
+      const paletteBtn = document.getElementById('paletteBtn'); if (paletteBtn) paletteBtn.textContent = p.name;
+    }
+
+    // wire palette button
+    const paletteBtn = document.getElementById('paletteBtn');
+    if (paletteBtn) {
+      paletteBtn.addEventListener('click', function(){
+        try { const last = parseInt(localStorage.getItem('budge.paletteIndex')||'-1',10); rotatePalette((last+1)%palettes.length); } catch(e){ rotatePalette(); }
+      });
+    }
+
+    // apply on load (rotate each time user opens the page)
+    rotatePalette();
+
+    // --- Three.js 3D character (simple low-poly mascot) ---
+  </script>
+  <script src="https://unpkg.com/three@0.154.0/build/three.min.js"></script>
+  <script>
+    (function(){
+      const canvas = document.getElementById('charCanvas');
+      if (!canvas || !window.THREE) return;
+      const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+      renderer.setPixelRatio(window.devicePixelRatio || 1);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40,1,0.1,100);
+      camera.position.set(0,1.6,4);
+
+      const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+      scene.add(hemi);
+      const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+      dir.position.set(5,10,7);
+      scene.add(dir);
+
+      // create simple mascot from primitives
+      const group = new THREE.Group();
+
+      const material = new THREE.MeshStandardMaterial({color:0xffcaa6, flatShading:true, roughness:0.6, metalness:0});
+      const darkMat = new THREE.MeshStandardMaterial({color:0x2b2b2b});
+
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.6,32,24), material);
+      head.position.set(0,0.8,0);
+      group.add(head);
+
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.0,1.1,0.6), material);
+      body.position.set(0,-0.15,0);
+      group.add(body);
+
+      const earL = new THREE.Mesh(new THREE.SphereGeometry(0.18,16,12), material);
+      earL.position.set(-0.45,1.18,0);
+      group.add(earL);
+      const earR = earL.clone(); earR.position.x = 0.45; group.add(earR);
+
+      const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.07,12,8), darkMat); eyeL.position.set(-0.17,0.9,0.52); group.add(eyeL);
+      const eyeR = eyeL.clone(); eyeR.position.x = 0.17; group.add(eyeR);
+
+      const snout = new THREE.Mesh(new THREE.BoxGeometry(0.34,0.18,0.12), darkMat);
+      snout.position.set(0,0.68,0.58); group.add(snout);
+
+      scene.add(group);
+
+      // ground subtle
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(6,6), new THREE.MeshStandardMaterial({color:0xffffff, opacity:0.02, transparent:true}));
+      ground.rotation.x = -Math.PI/2; ground.position.y = -0.75; scene.add(ground);
+
+      // animation clock and poke state
+      const clock = new THREE.Clock();
+      let pokeElapsed = 0;
+      const pokeDuration = 0.6; // seconds
+
+      function resize() {
+        const w = canvas.clientWidth || 160; const h = canvas.clientHeight || 220;
+        renderer.setSize(w, h, false);
+        camera.aspect = w/h; camera.updateProjectionMatrix();
+      }
+
+      function animate(){
+        const dt = clock.getDelta();
+        requestAnimationFrame(animate);
+        group.rotation.y += 0.007;
+        if (pokeElapsed > 0) {
+          pokeElapsed = Math.max(0, pokeElapsed - dt);
+          const frac = 1 - (pokeElapsed / pokeDuration);
+          group.rotation.x = Math.sin(frac * Math.PI) * 0.12;
+        } else {
+          group.rotation.x = 0;
+        }
+        renderer.render(scene, camera);
+      }
+
+      // expose color updater to palette logic
+      window.updateCharacterColor = function(cssColor){
+        try{
+          const col = new THREE.Color(cssColor || '#ffcaa6');
+          material.color.copy(col);
+        }catch(e){ /* ignore */ }
+      };
+
+      // allow external 'poke' (tap) to animate the character
+      window.characterPoke = function(){ pokeElapsed = pokeDuration; };
+
+      // click/tap on canvas shows caption and pokes the character
+      canvas.addEventListener('click', function(){
+        try { if (typeof showCaption === 'function') showCaption('HI! how are you doing out there', 4200); } catch(e) {}
+        try { window.characterPoke(); } catch(e) {}
+      });
+
+      // initial resize and start
+      resize(); window.addEventListener('resize', resize);
+      // apply initial palette color if available
+      try { const idx = parseInt(localStorage.getItem('budge.paletteIndex')||'0',10); if (!isNaN(idx)) window.updateCharacterColor(palettes[idx].btn2 || palettes[idx].primary); } catch(e){}
+      animate();
+    })();
+  </script>
+</body>
+</html>
